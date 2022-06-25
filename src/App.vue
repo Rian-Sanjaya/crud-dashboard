@@ -1,5 +1,5 @@
 <template>
-  <div id="main">
+  <div id="app">
     <div v-if="$route.meta.plainLayout">
       <router-view />
     </div>
@@ -24,7 +24,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-#main {
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

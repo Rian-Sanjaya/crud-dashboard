@@ -34,7 +34,6 @@ router.beforeEach((to, from, next) => {
   console.log('to: ', to);
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const accessToken = localStorage.getItem('accessToken');
-    console.log('accessToken: ', accessToken);
     if (accessToken) next();
     else next('/login');
   } else {
