@@ -1,30 +1,47 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import userRoute from './routes/user.route';
 
 Vue.use(VueRouter);
 
 const routes = [
+  ...userRoute,
   {
-    path: "/",
-    name: "home",
-    component: HomeView,
-  },
-  {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    path: '/home',
+    alias: '/',
+    name: 'Home',
+    meta: {
+      breadcrumb: [{ title: 'Beranda', active: true }],
+      title: 'Beranda',
+      requiresAuth: true
+    },
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+      import(/* webpackChunkName: "home" */ '@/views/HomeView.vue')
   },
+  {
+    path: '*',
+    redirect: '/'
+  }
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
-  routes,
+  routes
+});
+
+router.beforeEach((to, from, next) => {
+  console.log('to: ', to);
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    const accessToken = localStorage.getItem('accessToken');
+    console.log('accessToken: ', accessToken);
+    if (accessToken) next();
+    else next('/login');
+  } else {
+    const accessToken = localStorage.getItem('accessToken');
+    if (to.path === '/login' && accessToken) next('/home');
+    else next();
+  }
 });
 
 export default router;
