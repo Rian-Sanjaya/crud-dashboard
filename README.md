@@ -1,4 +1,4 @@
-# farmasi-dashboard
+# crud-dashboard
 
 ## Project setup
 ```
