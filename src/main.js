@@ -54,6 +54,7 @@ import {
   faAngleLeft
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import './styles/theme.less';
 
 Vue.config.productionTip = false;
 

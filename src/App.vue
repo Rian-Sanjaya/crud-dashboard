@@ -24,24 +24,31 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+*::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
 }
 
-nav {
-  padding: 30px;
+*::-webkit-scrollbar-thumb {
+  height: 6px;
+  border: 4px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  border-radius: 7px;
+  -webkit-border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.15);
+  box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
+    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
+    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+*::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+*::-webkit-scrollbar-corner {
+  background-color: transparent;
 }
 </style>
