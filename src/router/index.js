@@ -1,11 +1,15 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import userRoute from './routes/user.route';
+import settingRoute from './routes/setting.route';
+import reportRoute from './routes/report.route';
 
 Vue.use(VueRouter);
 
 const routes = [
   ...userRoute,
+  ...settingRoute,
+  ...reportRoute,
   {
     path: '/home',
     alias: '/',
@@ -34,7 +38,6 @@ router.beforeEach((to, from, next) => {
   console.log('to: ', to);
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const accessToken = localStorage.getItem('accessToken');
-    console.log('accessToken: ', accessToken);
     if (accessToken) next();
     else next('/login');
   } else {
