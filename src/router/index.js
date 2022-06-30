@@ -1,11 +1,15 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import userRoute from './routes/user.route';
+import settingRoute from './routes/setting.route';
+import reportRoute from './routes/report.route';
 
 Vue.use(VueRouter);
 
 const routes = [
   ...userRoute,
+  ...settingRoute,
+  ...reportRoute,
   {
     path: '/home',
     alias: '/',
