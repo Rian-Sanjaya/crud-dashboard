@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import PortalVue from 'portal-vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -131,6 +132,7 @@ library.add(
 );
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(PortalVue);
 
 new Vue({
   router,

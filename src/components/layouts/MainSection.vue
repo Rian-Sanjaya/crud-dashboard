@@ -5,10 +5,13 @@
       <header-section />
       <a-layout-content>
         <div :style="layoutStyle">
-          <router-view />
+          <router-view @setRightSidebarVisible="setRightSidebarVisible" />
         </div>
       </a-layout-content>
     </a-layout>
+    <template v-if="rightSidebarVisible">
+      <span>Right Sidebar Content</span>
+    </template>
   </a-layout>
 </template>
 
@@ -55,6 +58,11 @@ export default Vue.extend({
         this.$route.name !== 'TransactionHistoryDetail'
         ? '24px'
         : '0';
+    }
+  },
+  methods: {
+    setRightSidebarVisible(visible) {
+      this.rightSidebarVisible = visible;
     }
   }
 });
