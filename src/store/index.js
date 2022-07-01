@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import FormStore from './modules/form.store';
+import LoginStore from './modules/login.store';
+import UserStore from './modules/user.store';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  modules: { FormStore }
+  modules: { FormStore, LoginStore, UserStore }
 });
