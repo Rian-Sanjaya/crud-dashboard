@@ -14,6 +14,8 @@
       searchPlaceholder="Cari Admin"
       :columnTable="columnsAdmin"
       :dataTable="getAdminsComputed"
+      :pagination="pagination"
+      :loadingTable="loading"
       :onSearchTable="onSearch"
       @showFilter="openFilterModal"
     />
@@ -22,6 +24,7 @@
 
 <script>
 import Vue from 'vue';
+import { mapGetters, mapActions } from 'vuex';
 import DashboardTable from '../../components/table/DashboardTable.vue';
 
 const columnsAdmin = [
@@ -50,7 +53,7 @@ const columnsAdmin = [
     index: 3,
     title: 'Peran',
     dataIndex: 'roleText',
-    key: 'roles',
+    key: 'role',
     sorter: false
   },
   {
@@ -90,10 +93,29 @@ export default Vue.extend({
       perPageValue: 10
     };
   },
+  computed: {
+    ...mapGetters('AdminStore', ['getAdmins']),
+    getAdminsComputed() {
+      const adminData = this.getAdmins.map((admin, index) => {
+        const tmp = admin;
+        tmp.index =
+          this.pagination.pageSize * (this.pagination.current - 1) + index + 1;
+        tmp.roleText = tmp.role;
+        if (tmp.status === 'active') tmp.statusText = 'Terverifikasi';
+        else if (tmp.status === 'inactive')
+          tmp.statusText = 'Tidak Terverifikasi';
+        else tmp.statusText = 'Verifikasi Tertunda';
+        return tmp;
+      });
+      return this.isFirst ? [] : adminData;
+    }
+  },
   components: {
     DashboardTable
   },
   methods: {
+    // ...mapActions('UserStore', ['getUserInfo']),
+    ...mapActions('AdminStore', ['fetchAdmins']),
     onSearch(value) {
       this.search = value;
       this.pagination.page = 1;
@@ -102,10 +124,39 @@ export default Vue.extend({
     openFilterModal() {
       this.modalTitle = 'Filter';
       // this.$refs.form.showFilter();
+    },
+    fetchData() {
+      this.loading = true;
+      const orderBy = this.sorter
+        ? this.sorter
+        : '&_sort=updatedAt&_order=desc';
+      const payload = {
+        page: this.pagination.page,
+        limit: this.pagination.perPage,
+        orderBy
+      };
+      this.fetchAdmins(payload)
+        .then(() => {
+          this.loading = false;
+          const tmpPagination = { ...this.pagination };
+          tmpPagination.total = this.getAdmins.length;
+          tmpPagination.pageSize = tmpPagination.perpage;
+          tmpPagination.current = tmpPagination.page;
+          this.pagination = tmpPagination;
+          console.log('admin pagination: ', this.pagination);
+          this.isFirst = false;
+        })
+        .catch((err) => {
+          console.log('Error fetch admin: ', err);
+        });
     }
   },
   created() {
     this.$emit('setRightSidebarVisible', false);
+  },
+  mounted() {
+    // this.getUserInfo();
+    this.fetchData();
   }
 });
 </script>

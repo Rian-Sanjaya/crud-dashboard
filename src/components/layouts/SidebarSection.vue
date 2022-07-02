@@ -97,8 +97,8 @@
         <div class="profile-avatar"><a-avatar :size="40" icon="user" /></div>
         <div class="profile-title-wrapper">
           <div class="profile-title-container">
-            <div class="profile-title">{{ userName }}</div>
-            <div class="profile-subtitle">{{ userRole }}</div>
+            <div class="profile-title">{{ getUserName }}</div>
+            <div class="profile-subtitle">{{ getUserRole }}</div>
           </div>
           <div class="vertical-ellipsis"></div>
         </div>
@@ -109,7 +109,7 @@
 
 <script>
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import { logOut } from '../../helpers/utils';
 
 export default Vue.extend({
@@ -193,15 +193,14 @@ export default Vue.extend({
           }
         }
       ],
-      profileVisible: false,
-      userRole: '',
-      userName: ''
+      profileVisible: false
     };
   },
   computed: {
     ...mapGetters('UserStore', ['getUserName', 'getUserRole'])
   },
   methods: {
+    ...mapActions('UserStore', ['getUserInfo']),
     setCurrentUrl(value) {
       this.currentUrl = value;
     },
@@ -237,8 +236,8 @@ export default Vue.extend({
   },
   mounted() {
     this.currentUrl = window.location.pathname;
-    this.userName = this.getUserName;
-    this.userRole = this.getUserRole;
+    const userId = JSON.parse(localStorage.getItem('userData')).id;
+    this.getUserInfo(userId);
   }
 });
 </script>

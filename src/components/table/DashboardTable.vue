@@ -116,6 +116,9 @@ export default Vue.extend({
     },
     handlePerPageChange(value) {
       this.$emit('handlePerPageChange', value);
+    },
+    mounted() {
+      console.log('pagination: ', this.pagination);
     }
   }
 });

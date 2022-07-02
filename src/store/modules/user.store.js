@@ -10,22 +10,26 @@ const UserStore = {
   }),
   getters: {
     getUserId(state) {
-      return state.userId || JSON.parse(localStorage.getItem('userData')).id;
+      // return state.userId || JSON.parse(localStorage.getItem('userData')).id;
+      return state.userId;
     },
     getClienId(state) {
-      return (
-        state.clientId || JSON.parse(localStorage.getItem('userData')).clientId
-      );
+      // return (
+      //   state.clientId || JSON.parse(localStorage.getItem('userData')).clientId
+      // );
+      return state.clientId;
     },
     getUserName(state) {
-      return (
-        state.userName || JSON.parse(localStorage.getItem('userData')).name
-      );
+      // return (
+      //   state.userName || JSON.parse(localStorage.getItem('userData')).name
+      // );
+      return state.userName;
     },
     getUserRole(state) {
-      return (
-        state.userRole || JSON.parse(localStorage.getItem('userData')).role
-      );
+      // return (
+      //   state.userRole || JSON.parse(localStorage.getItem('userData')).role
+      // );
+      return state.userRole;
     }
   },
   actions: {
