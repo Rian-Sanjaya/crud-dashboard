@@ -74,8 +74,8 @@
 
 <script>
 import Vue from 'vue';
-import { mapGetters, mapMutations } from 'vuex';
-// import { message, Modal } from 'ant-design-vue';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { message } from 'ant-design-vue';
 import { passwordRegex } from '../../helpers/utils';
 
 export default Vue.extend({
@@ -99,6 +99,8 @@ export default Vue.extend({
       validateFirst: 'VALIDATE_FIRST',
       setLoading: 'SET_LOADING'
     }),
+    ...mapActions('LoginStore', ['login']),
+    ...mapActions('UserStore', ['getUserInfo']),
     checkError(field) {
       const { getFieldError, isFieldTouched } = this.form;
       return isFieldTouched(field) && getFieldError(field);
@@ -111,13 +113,34 @@ export default Vue.extend({
           password: values.password
         };
         if (!err) {
-          console.log('userDataExternal: ', userDataExternal);
           this.setLoading(true);
-          localStorage.setItem('accessToken', 'abc');
-          window.location = '/';
-          this.setLoading(false);
+          this.login(userDataExternal)
+            .then((res) => {
+              if (res.status) {
+                this.getUserData(res.data[0].id);
+              } else {
+                message.info(res.message);
+                this.setLoading(false);
+              }
+            })
+            .catch(() => {
+              this.setLoading(false);
+              message.error('Login gagal.');
+            });
         }
       });
+    },
+    getUserData(id) {
+      this.getUserInfo(id)
+        .then((res) => {
+          this.setLoading(false);
+          if (res.status) window.location = '/';
+        })
+        .catch(() => {
+          message.error(
+            'Ada kesalahan sistem, mohon ulangi beberapa saat lagi.'
+          );
+        });
     }
   },
   created() {

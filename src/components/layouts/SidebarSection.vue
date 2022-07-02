@@ -4,12 +4,10 @@
     breakpoint="lg"
     collapsed-width="0"
     width="300"
-    @collapse="onCollapse"
-    @breakpoint="onBreakpoint"
   >
     <div class="p-sidebar-logo">
       <!-- <img :src="assetUrl + '/dashboard/prixa-logo.png'" height="33" /> -->
-      <h5 class="color-white">Farmasi</h5>
+      <h5 class="color-white">Dashboard</h5>
     </div>
     <a-divider class="menu-divider" />
     <div class="list-section">
@@ -99,8 +97,8 @@
         <div class="profile-avatar"><a-avatar :size="40" icon="user" /></div>
         <div class="profile-title-wrapper">
           <div class="profile-title-container">
-            <div class="profile-title">{{ userFullName }}</div>
-            <div class="profile-subtitle">{{ userRole }}</div>
+            <div class="profile-title">{{ getUserName }}</div>
+            <div class="profile-subtitle">{{ getUserRole }}</div>
           </div>
           <div class="vertical-ellipsis"></div>
         </div>
@@ -111,6 +109,7 @@
 
 <script>
 import Vue from 'vue';
+import { mapGetters, mapActions } from 'vuex';
 import { logOut } from '../../helpers/utils';
 
 export default Vue.extend({
@@ -159,9 +158,9 @@ export default Vue.extend({
                 title: 'Admin'
               },
               {
-                key: 'apoteker',
+                key: 'operator',
                 link: '/pharmacist',
-                title: 'Apoteker'
+                title: 'Operator'
               },
               {
                 key: 'product-list',
@@ -181,9 +180,9 @@ export default Vue.extend({
             ],
             staff: [
               {
-                key: 'apoteker',
+                key: 'operator',
                 link: '/pharmacist',
-                title: 'Apoteker'
+                title: 'Operator'
               },
               {
                 key: 'stock-product',
@@ -194,12 +193,14 @@ export default Vue.extend({
           }
         }
       ],
-      profileVisible: false,
-      userRole: '',
-      userFullName: ''
+      profileVisible: false
     };
   },
+  computed: {
+    ...mapGetters('UserStore', ['getUserName', 'getUserRole'])
+  },
   methods: {
+    ...mapActions('UserStore', ['getUserInfo']),
     setCurrentUrl(value) {
       this.currentUrl = value;
     },
@@ -231,13 +232,12 @@ export default Vue.extend({
     },
     handleLogout() {
       logOut();
-    },
-    onCollapse(collapse, type) {
-      console.log(collapse, type);
-    },
-    onBreakpoint(broken) {
-      console.log(broken);
     }
+  },
+  mounted() {
+    this.currentUrl = window.location.pathname;
+    const userId = JSON.parse(localStorage.getItem('userData')).id;
+    this.getUserInfo(userId);
   }
 });
 </script>

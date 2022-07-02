@@ -23,6 +23,9 @@
           <h2 class="margin-baseT p-header-title">{{ headerTitle }}</h2>
         </div>
       </a-col>
+      <a-col>
+        <portal-target name="header-toolbar"></portal-target>
+      </a-col>
     </a-row>
   </a-layout-header>
 </template>
