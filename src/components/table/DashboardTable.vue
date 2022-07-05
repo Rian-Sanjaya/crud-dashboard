@@ -44,8 +44,33 @@
         <template slot="referenceCode" slot-scope="data, record">
           <slot name="referenceCode" :data="data" :record="record"></slot>
         </template>
+        <template slot="user_status" slot-scope="record">
+          <slot name="statusData" :record="record"></slot>
+        </template>
+        <template slot="action" slot-scope="record">
+          <a-dropdown
+            v-if="
+              (record.id !== getUserId &&
+                getUserRole !== 'externalUsers-pharmacies-staff') ||
+              actionAllUser
+            "
+            placement="bottomRight"
+          >
+            <a class="ant-dropdown-link" @click="(e) => e.preventDefault()">
+              <div class="vertical-ellipsis-container">
+                <div class="vertical-ellipsis"></div>
+                <div class="vertical-ellipsis"></div>
+                <div class="vertical-ellipsis"></div>
+              </div>
+            </a>
+            <a-menu slot="overlay">
+              <slot name="actionDropdown" :record="record"></slot>
+              <slot name="actionDropdownExternal" :record="record"></slot>
+            </a-menu>
+          </a-dropdown>
+        </template>
       </a-table>
-      <div class="" v-if="dataTable.length > 0">
+      <div class="p-pager-size" v-if="dataTable.length > 0">
         <span class="desc1">Tampilkan</span>
         <a-select :value="perPageValue" @change="handlePerPageChange">
           <a-select-option value="10">10</a-select-option>
@@ -103,8 +128,7 @@ export default Vue.extend({
       if (sorter.column) {
         sorterColumn.forEach((column, index) => {
           if (index === sorter.column.index)
-            sorterColumn[sorter.column.index].getElementsByClassName.opacity =
-              '1';
+            sorterColumn[sorter.column.index].style.opacity = '1';
           else sorterColumn[index].style.opacity = null;
         });
       } else {
@@ -116,9 +140,6 @@ export default Vue.extend({
     },
     handlePerPageChange(value) {
       this.$emit('handlePerPageChange', value);
-    },
-    mounted() {
-      console.log('pagination: ', this.pagination);
     }
   }
 });
