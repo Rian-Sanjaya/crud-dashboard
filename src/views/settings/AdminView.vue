@@ -5,7 +5,7 @@
         <a-icon type="download" style="margin-right: 8px" />
         Unduh CSV
       </span>
-      <button class="header-button-add">
+      <button class="header-button-add" @click="openForm">
         <a-icon type="plus" class="icon" />
         Tambah Admin
       </button>
@@ -17,7 +17,50 @@
       :pagination="pagination"
       :loadingTable="loading"
       :onSearchTable="onSearch"
+      :perPageValue="perPageValue"
+      @handleTableChange="handleTableChange"
       @showFilter="openFilterModal"
+      @handlePerPageChange="handlePerPageChange"
+    >
+      <template slot="statusData" slot-scope="{ record }">
+        <a-tag class="prixa-ant-tag" :color="record | statusColor">
+          {{ record }}
+        </a-tag>
+      </template>
+      <template slot="actionDropdown" slot-scope="{ record }">
+        <a-menu-item v-if="record.id !== getUserId">
+          <a
+            href="javascript:;"
+            @click="handleUpdate(record.id, record.clientId)"
+            >Ubah Data</a
+          >
+        </a-menu-item>
+        <a-menu-item
+          v-if="record.id !== getUserId && record.status === 'pending'"
+        >
+          <a href="javascript:;" @click="sendVerification(record)"
+            >Verifikasi Email</a
+          >
+        </a-menu-item>
+        <template v-if="record.id !== getUserId">
+          <a-menu-divider />
+          <a-menu-item>
+            <a
+              href="javascript:;"
+              @click="handleDelete(record)"
+              class="color-danger"
+            >
+              Hapus Admin
+            </a>
+          </a-menu-item>
+        </template>
+      </template>
+    </dashboard-table>
+    <admin-modal
+      :modal-title="modalTitle"
+      ref="form"
+      @fetchData="fetchData"
+      @filter="filterData"
     />
   </div>
 </template>
@@ -26,6 +69,7 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import DashboardTable from '../../components/table/DashboardTable.vue';
+import AdminModal from '../../components/admin/AdminModal.vue';
 
 const columnsAdmin = [
   {
@@ -94,7 +138,8 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('AdminStore', ['getAdmins']),
+    ...mapGetters('AdminStore', ['getAdmins', 'getTotalAdmins']),
+    ...mapGetters('UserStore', ['getUserId', 'getClientId']),
     getAdminsComputed() {
       const adminData = this.getAdmins.map((admin, index) => {
         const tmp = admin;
@@ -111,19 +156,80 @@ export default Vue.extend({
     }
   },
   components: {
-    DashboardTable
+    DashboardTable,
+    AdminModal
+  },
+  filters: {
+    statusColor(record) {
+      let color = 'blue';
+      if (record === 'Terverifikasi') color = 'green';
+      else if (record === 'Tidak Terverifikasi') color = 'red';
+      return color;
+    }
   },
   methods: {
-    // ...mapActions('UserStore', ['getUserInfo']),
-    ...mapActions('AdminStore', ['fetchAdmins']),
+    ...mapActions('AdminStore', ['fetchAllAdminsWithParams', 'getUsersByRole']),
     onSearch(value) {
-      this.search = value;
+      this.search = value ? `&name_like=${value}` : '';
       this.pagination.page = 1;
-      // this.fetchData();
+      this.fetchData();
+    },
+    openForm() {
+      this.modalTitle = 'Tambah Admin';
+      this.$refs.form.showModal();
     },
     openFilterModal() {
       this.modalTitle = 'Filter';
-      // this.$refs.form.showFilter();
+      this.$refs.form.showFilter();
+    },
+    filterData(filter) {
+      this.filter = filter;
+      this.pagination.page = 1;
+      this.fetchData();
+    },
+    handleUpdate(recordId, recordClientId) {
+      this.modalTitle = 'Ubah Data';
+      this.$refs.form.showModal(recordId, recordClientId);
+    },
+    sendVerification(record) {
+      this.modalTitle = 'Verifikasi Email';
+      this.$refs.form.showVerification(record);
+    },
+    handleDelete(record) {
+      this.modalTitle = 'Hapus Admin';
+      this.$refs.form.showDelete(record);
+    },
+    handlePerPageChange(value) {
+      this.perPageValue = Number(value);
+      const pager = { ...this.pagination };
+      pager.perpage = Number(value);
+      this.pagination = pager;
+      if (pager.perpage > pager.total) {
+        this.pagination.page = 1;
+      }
+      this.fetchData();
+    },
+    handleTableChange({ pagination, sorter }) {
+      if (sorter.order) {
+        if (sorter.columnKey === 'name') {
+          this.sorter = `&_sort=name&_order=${
+            sorter.order === 'ascend' ? 'asc' : 'desc'
+          }`;
+        } else if (sorter.columnKey === 'email') {
+          this.sorter = `&_sort=email&_order=${
+            sorter.order === 'ascend' ? 'asc' : 'desc'
+          }`;
+        } else {
+          this.sorter = '';
+        }
+      } else {
+        this.sorter = '';
+      }
+      const pager = { ...this.pagination };
+      pager.page = pagination.current;
+      pager.perpage = pagination.pageSize;
+      this.pagination = pager;
+      this.fetchData();
     },
     fetchData() {
       this.loading = true;
@@ -132,19 +238,29 @@ export default Vue.extend({
         : '&_sort=updatedAt&_order=desc';
       const payload = {
         page: this.pagination.page,
-        limit: this.pagination.perPage,
-        orderBy
+        limit: this.pagination.perpage,
+        orderBy,
+        role: '&role=admin',
+        search: this.search
       };
-      this.fetchAdmins(payload)
+      this.getUsersByRole(payload)
         .then(() => {
-          this.loading = false;
-          const tmpPagination = { ...this.pagination };
-          tmpPagination.total = this.getAdmins.length;
-          tmpPagination.pageSize = tmpPagination.perpage;
-          tmpPagination.current = tmpPagination.page;
-          this.pagination = tmpPagination;
-          console.log('admin pagination: ', this.pagination);
-          this.isFirst = false;
+          const payload = {
+            search: this.search
+          };
+          this.fetchAllAdminsWithParams(payload)
+            .then(() => {
+              this.loading = false;
+              const tmpPagination = { ...this.pagination };
+              tmpPagination.total = this.getTotalAdmins;
+              tmpPagination.pageSize = tmpPagination.perpage;
+              tmpPagination.current = tmpPagination.page;
+              this.pagination = tmpPagination;
+              this.isFirst = false;
+            })
+            .catch((err) => {
+              console.log('Error fetch total admin: ', err);
+            });
         })
         .catch((err) => {
           console.log('Error fetch admin: ', err);

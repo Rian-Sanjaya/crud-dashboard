@@ -1,4 +1,9 @@
-import { getUserInfo } from '../../api/user';
+import {
+  getUserInfo,
+  createUser,
+  updateUser,
+  deleteUser
+} from '../../api/user';
 
 const UserStore = {
   namespaced: true,
@@ -43,6 +48,27 @@ const UserStore = {
         localStorage.setItem('userData', JSON.stringify(data.data));
         if (data.status === 200) return { status: true };
         else return { status: false };
+      } catch (err) {
+        throw Error(err);
+      }
+    },
+    async createUser(_event, payload) {
+      try {
+        await createUser(payload);
+      } catch (err) {
+        throw Error(err);
+      }
+    },
+    async updateUser(_event, payload) {
+      try {
+        await updateUser(payload);
+      } catch (err) {
+        throw Error(err);
+      }
+    },
+    async deleteUser(_event, id) {
+      try {
+        await deleteUser(id);
       } catch (err) {
         throw Error(err);
       }
