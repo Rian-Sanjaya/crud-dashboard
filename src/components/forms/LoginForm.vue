@@ -133,8 +133,10 @@ export default Vue.extend({
     getUserData(id) {
       this.getUserInfo(id)
         .then((res) => {
-          this.setLoading(false);
           if (res.status) window.location = '/';
+          setTimeout(() => {
+            this.setLoading(false);
+          }, 2000);
         })
         .catch(() => {
           message.error(

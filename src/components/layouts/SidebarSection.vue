@@ -7,7 +7,7 @@
   >
     <div class="p-sidebar-logo">
       <!-- <img :src="assetUrl + '/dashboard/prixa-logo.png'" height="33" /> -->
-      <h5 class="color-white">Dashboard</h5>
+      <h5 class="color-white">Admin Dashboard</h5>
     </div>
     <a-divider class="menu-divider" />
     <div class="list-section">
@@ -55,6 +55,7 @@
                       <li
                         v-for="item in menu.menuItems['admin']"
                         :key="item.key"
+                        @click="setCurrentUrl(item.link)"
                       >
                         <router-link
                           :to="item.link"
