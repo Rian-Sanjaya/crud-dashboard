@@ -10,6 +10,11 @@ const getUserAdminsWithParams = ({ search }) => {
   return axios.get(USER_API.GET_ALL_ADMIN_WITH_PARAMS(params));
 };
 
+const getUserStaffsWithParams = ({ search }) => {
+  const params = `${search || ''}`;
+  return axios.get(USER_API.GET_ALL_STAFF_WITH_PARAMS(params));
+};
+
 const getUsersByRole = ({ page, limit, role, orderBy, search }) => {
   const params = `${role || ''}` + `${orderBy || ''}` + `${search || ''}`;
   return axios.get(USER_API.GET_ALL_BY_ROLE(page, limit, params));
@@ -45,6 +50,7 @@ export {
   getUserInfo,
   getUserAdmins,
   getUserAdminsWithParams,
+  getUserStaffsWithParams,
   getUsersByRole,
   getUserById,
   createUser,

@@ -162,6 +162,16 @@
         "Content-Type": "application/json"
       },
       "id": "_SqIJYW"
+    },
+    {
+      "email": "gru@minion.com",
+      "name": "gru minion",
+      "role": "staff",
+      "clientId": "c2457a88-58e5-42d7-a56b-2c093b559dcd",
+      "status": "active",
+      "createdAt": "2022-07-10T08:11:33.469Z",
+      "updatedAt": "2022-07-10T08:11:33.469Z",
+      "id": "IdQekVq"
     }
   ]
 }

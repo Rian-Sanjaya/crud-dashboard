@@ -7,13 +7,13 @@
       </span> -->
       <button class="header-button-add" @click="openForm">
         <a-icon type="plus" class="icon" />
-        Tambah Admin
+        Tambah Staff
       </button>
     </portal>
     <dashboard-table
-      searchPlaceholder="Cari Admin"
-      :columnTable="columnsAdmin"
-      :dataTable="getAdminsComputed"
+      searchPlaceholder="Cari Staff"
+      :columnTable="columnsStaff"
+      :dataTable="getStaffComputed"
       :pagination="pagination"
       :loadingTable="loading"
       :onSearchTable="onSearch"
@@ -50,13 +50,13 @@
               @click="handleDelete(record)"
               class="color-danger"
             >
-              Hapus Admin
+              Hapus Staff
             </a>
           </a-menu-item>
         </template>
       </template>
     </dashboard-table>
-    <admin-modal
+    <staff-modal
       :modal-title="modalTitle"
       ref="form"
       @fetchData="fetchData"
@@ -69,9 +69,9 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import DashboardTable from '../../components/table/DashboardTable.vue';
-import AdminModal from '../../components/admin/AdminModal.vue';
+import StaffModal from '../../components/staff/StaffModal.vue';
 
-const columnsAdmin = [
+const columnsStaff = [
   {
     index: 0,
     title: 'No',
@@ -121,7 +121,7 @@ export default Vue.extend({
   data() {
     return {
       isFirst: true,
-      columnsAdmin,
+      columnsStaff,
       loading: true,
       pagination: {
         page: 1,
@@ -138,11 +138,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('AdminStore', ['getAdmins', 'getTotalAdmins']),
+    ...mapGetters('StaffStore', ['getStaffs', 'getTotalStaff']),
     ...mapGetters('UserStore', ['getUserId', 'getClientId']),
-    getAdminsComputed() {
-      const adminData = this.getAdmins.map((admin, index) => {
-        const tmp = admin;
+    getStaffComputed() {
+      const staffData = this.getStaffs.map((staff, index) => {
+        const tmp = staff;
         tmp.index =
           this.pagination.pageSize * (this.pagination.current - 1) + index + 1;
         tmp.roleText = tmp.role;
@@ -152,12 +152,12 @@ export default Vue.extend({
         else tmp.statusText = 'Verifikasi Tertunda';
         return tmp;
       });
-      return this.isFirst ? [] : adminData;
+      return this.isFirst ? [] : staffData;
     }
   },
   components: {
     DashboardTable,
-    AdminModal
+    StaffModal
   },
   filters: {
     statusColor(record) {
@@ -168,14 +168,14 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('AdminStore', ['fetchAllAdminsWithParams', 'getUsersByRole']),
+    ...mapActions('StaffStore', ['fetchAllStaffsWithParams', 'getUsersByRole']),
     onSearch(value) {
       this.search = value ? `&name_like=${value}` : '';
       this.pagination.page = 1;
       this.fetchData();
     },
     openForm() {
-      this.modalTitle = 'Tambah Admin';
+      this.modalTitle = 'Tambah Staff';
       this.$refs.form.showModal();
     },
     openFilterModal() {
@@ -196,7 +196,7 @@ export default Vue.extend({
       this.$refs.form.showVerification(record);
     },
     handleDelete(record) {
-      this.modalTitle = 'Hapus Admin';
+      this.modalTitle = 'Hapus Staff';
       this.$refs.form.showDelete(record);
     },
     handlePerPageChange(value) {
@@ -240,7 +240,7 @@ export default Vue.extend({
         page: this.pagination.page,
         limit: this.pagination.perpage,
         orderBy,
-        role: '&role=admin',
+        role: '&role=staff',
         search: this.search
       };
       this.getUsersByRole(payload)
@@ -248,22 +248,22 @@ export default Vue.extend({
           const payload = {
             search: this.search
           };
-          this.fetchAllAdminsWithParams(payload)
+          this.fetchAllStaffsWithParams(payload)
             .then(() => {
               this.loading = false;
               const tmpPagination = { ...this.pagination };
-              tmpPagination.total = this.getTotalAdmins;
+              tmpPagination.total = this.getTotalStaff;
               tmpPagination.pageSize = tmpPagination.perpage;
               tmpPagination.current = tmpPagination.page;
               this.pagination = tmpPagination;
               this.isFirst = false;
             })
             .catch((err) => {
-              console.log('Error fetch total admin: ', err);
+              console.log('Error fetch total staff: ', err);
             });
         })
         .catch((err) => {
-          console.log('Error fetch admin: ', err);
+          console.log('Error fetch staff: ', err);
         });
     }
   },

@@ -17,21 +17,21 @@ export default [
       )
   },
   {
-    path: '/pharmacist',
-    name: 'Pharmacist',
+    path: '/staff',
+    name: 'Staff',
     meta: {
       breadcrumb: [
         { title: 'Beranda', url: '/' },
         { title: 'Pengaturan' },
-        { title: 'Apoteker', active: true }
+        { title: 'Staff', active: true }
       ],
-      title: 'Apoteker',
+      title: 'Staff',
       requiresAuth: true
-    }
-    // component: () =>
-    //   import(
-    //     /* webpackChunkName: "pharmacist" */ '../../views/settings/Pharmacist.vue'
-    //   )
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "staff" */ '../../views/settings/StaffView.vue'
+      )
   },
   {
     path: '/product-list',

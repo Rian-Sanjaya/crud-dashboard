@@ -1,6 +1,6 @@
 <template>
   <a-layout-sider
-    class="prixa-sidebar"
+    class="p-sidebar"
     breakpoint="lg"
     collapsed-width="0"
     width="300"
@@ -51,9 +51,9 @@
                     :header="menu.title"
                     style="border: none; box-shadow: none; font-size: 18px"
                   >
-                    <ul v-if="menu.menuItems['admin']">
+                    <ul v-if="menu.menuItems[getUserRole]">
                       <li
-                        v-for="item in menu.menuItems['admin']"
+                        v-for="item in menu.menuItems[getUserRole]"
                         :key="item.key"
                         @click="setCurrentUrl(item.link)"
                       >
@@ -159,9 +159,9 @@ export default Vue.extend({
                 title: 'Admin'
               },
               {
-                key: 'operator',
-                link: '/pharmacist',
-                title: 'Operator'
+                key: 'staff',
+                link: '/staff',
+                title: 'Staff'
               },
               {
                 key: 'product-list',
@@ -181,9 +181,9 @@ export default Vue.extend({
             ],
             staff: [
               {
-                key: 'operator',
-                link: '/pharmacist',
-                title: 'Operator'
+                key: 'staff',
+                link: '/staff',
+                title: 'Staff'
               },
               {
                 key: 'stock-product',
@@ -209,7 +209,7 @@ export default Vue.extend({
       if (key === 'admin') {
         return this.currentUrl === link ? this.adminIconActive : this.adminIcon;
       }
-      if (key === 'apoteker') {
+      if (key === 'staff') {
         return this.currentUrl === link
           ? this.apotekerIconActive
           : this.apotekerIcon;

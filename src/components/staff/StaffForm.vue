@@ -52,7 +52,7 @@
           @change="handleChange"
           v-decorator="['role', { rules: [{ required: true }] }]"
         >
-          <a-select-option value="admin"> Admin </a-select-option>
+          <a-select-option value="admin"> Staff </a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item
@@ -145,7 +145,7 @@ export default Vue.extend({
       userStatus: '',
       isLoading: false,
       isSubmitError: false,
-      submitErrorMessage: 'Gagal menambah admin, mohon ulangi'
+      submitErrorMessage: 'Gagal menambah staff, mohon ulangi'
     };
   },
   props: {
@@ -162,7 +162,7 @@ export default Vue.extend({
       form: 'getForm',
       loading: 'getLoading'
     }),
-    ...mapGetters('AdminStore', ['getAdmin'])
+    ...mapGetters('StaffStore', ['getStaff'])
   },
   methods: {
     ...mapMutations('FormStore', {
@@ -171,7 +171,7 @@ export default Vue.extend({
       setLoading: 'SET_LOADING'
     }),
     ...mapActions('UserStore', ['createUser', 'updateUser']),
-    ...mapActions('AdminStore', ['getAdminById']),
+    ...mapActions('StaffStore', ['getStaffById']),
     checkError(field) {
       const { getFieldError, isFieldTouched } = this.form;
       return isFieldTouched(field) && getFieldError(field);
@@ -187,7 +187,7 @@ export default Vue.extend({
     //   this.$emit('view-roles-information');
     // },
     setRoleIndoName(role) {
-      if (role === 'admin') return 'Admin';
+      if (role === 'staff') return 'Staff';
       return '';
     },
     handleBlur() {
@@ -265,11 +265,11 @@ export default Vue.extend({
     const clientId = userData.clientId ? userData.clientId : '';
     if (clientId) this.clientIdUser = clientId;
     // else this.fetch({ limit: 100, offset: 0 });
-    this.setForm(this.$form.createForm(this, { name: 'admin_form' }));
+    this.setForm(this.$form.createForm(this, { name: 'staff_form' }));
   },
   mounted() {
     this.form.setFieldsValue({
-      role: 'admin'
+      role: 'staff'
     });
 
     if (this.id && this.clientId) {
@@ -277,12 +277,12 @@ export default Vue.extend({
       const data = {
         id: this.id
       };
-      this.getAdminById(data.id).then(() => {
+      this.getStaffById(data.id).then(() => {
         this.form.setFieldsValue({
-          name: this.getAdmin.name,
-          email: this.getAdmin.email
+          name: this.getStaff.name,
+          email: this.getStaff.email
         });
-        this.userStatus = this.getAdmin.status;
+        this.userStatus = this.getStaff.status;
         this.isLoading = false;
       });
     }
